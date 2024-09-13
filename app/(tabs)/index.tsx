@@ -1,70 +1,132 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Button,
+  ScrollView,
+} from "react-native";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function App() {
+  const [text, setText] = useState("");
+  const [morseCode, setMorseCode] = useState("");
 
-export default function HomeScreen() {
+  // Tableau de correspondance lettre -> morse
+  const morseMap = {
+    A: ".-",
+    B: "-...",
+    C: "-.-.",
+    D: "-..",
+    E: ".",
+    F: "..-.",
+    G: "--.",
+    H: "....",
+    I: "..",
+    J: ".---",
+    K: "-.-",
+    L: ".-..",
+    M: "--",
+    N: "-.",
+    O: "---",
+    P: ".--.",
+    Q: "--.-",
+    R: ".-.",
+    S: "...",
+    T: "-",
+    U: "..-",
+    V: "...-",
+    W: ".--",
+    X: "-..-",
+    Y: "-.--",
+    Z: "--..",
+    "1": ".----",
+    "2": "..---",
+    "3": "...--",
+    "4": "....-",
+    "5": ".....",
+    "6": "-....",
+    "7": "--...",
+    "8": "---..",
+    "9": "----.",
+    "0": "-----",
+    " ": " ",
+    ",": "--..--",
+    ".": ".-.-.-",
+  };
+
+  // Fonction pour traduire un texte en morse
+  const translateToMorse = (inputText: any) => {
+    let result = "";
+    const upperText = inputText.toUpperCase();
+
+    for (let char of upperText) {
+      // @ts-ignore
+      result += morseMap[char] ? morseMap[char] + " " : "";
+    }
+
+    setMorseCode(result.trim());
+  };
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Traduction en Morse</Text>
+
+      <TextInput
+        style={styles.input}
+        placeholder="Entrez le texte (ex: Hello EEMI)"
+        value={text}
+        onChangeText={(value) => setText(value)}
+      />
+
+      <Button
+        title="Traduire en Morse"
+        onPress={() => translateToMorse(text)}
+      />
+
+      {morseCode ? (
+        <View style={styles.resultContainer}>
+          <Text style={styles.resultText}>Résultat en Morse :</Text>
+          <Text style={styles.morseText}>{morseCode}</Text>
+        </View>
+      ) : null}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  input: {
+    height: 50,
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 5,
+    width: "100%",
+    paddingHorizontal: 10,
+    marginBottom: 20,
+  },
+  resultContainer: {
+    marginTop: 20,
+    alignItems: "center",
+  },
+  resultText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  morseText: {
+    fontSize: 16,
+    marginTop: 10,
+    color: "#333",
   },
 });
